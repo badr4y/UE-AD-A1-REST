@@ -15,6 +15,22 @@ with open('{}/databases/users.json'.format("."), "r") as jsf:
 def home():
    return "<h1 style='color:blue'>Welcome to the User service!</h1>"
 
+@app.route("/users/<user_Id>", methods=['GET'])
+def getUserInfoById(user_Id):
+    # Convert filter result to a list and check if a user was found
+    user = list(filter(lambda x: x['id'] == user_Id, users))
+
+    if user:  # If the user list is not empty
+        return make_response(jsonify(user[0]), 200)  # Return the first user found
+    else:
+        return make_response(jsonify({'error': 'User not found'}), 400)
+
+@app.route("/users/<timeSinceLastActivity>", methods=['GET'])
+def getUserSinceTime(timeSinceLastActivity):
+   
+   userArray = list(filter(lambda x: x['last_active'] > int(timeSinceLastActivity),users))
+   return make_response(jsonify(userArray), 200)
+
 
 if __name__ == "__main__":
    print("Server running in port %s"%(PORT))
