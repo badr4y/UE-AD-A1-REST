@@ -57,6 +57,7 @@ def get_movie_byid(movieid):
             res = make_response(jsonify(movie),200)
             return res
     return make_response(jsonify({"error":"Movie ID not found"}),400)
+
 @app.route("/movies/<movieid>", methods=['DELETE'])
 def del_movie(movieid):
     for movie in movies:
@@ -69,6 +70,7 @@ def del_movie(movieid):
 @app.route("/template", methods=['GET'])
 def template():
     return make_response(render_template('index.html', body_text='This is my HTML template for Movie service'),200)
+
 @app.route("/movies/<movieid>/<rate>", methods=['PUT'])
 def update_movie_rating(movieid, rate):
     for movie in movies:

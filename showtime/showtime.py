@@ -17,12 +17,15 @@ def home():
 
 @app.route("/showtimes", methods=['GET'])
 def get_times():
-   return schedule
+   return make_response(jsonify(schedule), 200)
+   
 
 @app.route("/showmovies/<date>", methods=['GET'])
 def get_moviesByDate(date):
-   movie =  filter(lambda x: x["date"] == date,schedule)
-   return movie
+   movie =  list(filter(lambda x: x["date"] == date,schedule))
+   return make_response(jsonify(movie), 200)  # Return the first user found
+
+
 
 if __name__ == "__main__":
    print("Server running in port %s"%(PORT))
