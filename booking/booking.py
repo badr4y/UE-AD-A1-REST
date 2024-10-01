@@ -37,11 +37,10 @@ def get_bookings_byuserid(userid):
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking_byuserid(userid):
     req = request.get_json()
-    dates = req.get("dates")
-
+    dates = req['dates']
     for date in dates:
         showtime_response = requests.get(f"http://127.0.0.1:3202/showmovies/{date.get('date')}")
-
+        print(date)
         # Check if the response is successful
         if showtime_response.status_code != 200:
             return make_response(jsonify({"error": "Invalid date"}), 400)
