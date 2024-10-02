@@ -37,55 +37,63 @@ def get_bookings_byuserid(userid):
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking_byuserid(userid):
     req = request.get_json()
-    dates = req['dates']
-    for date in dates:
-        showtime_response = requests.get(f"http://127.0.0.1:3202/showmovies/{date.get('date')}")
-        print(date)
-        # Check if the response is successful
-        if showtime_response.status_code != 200:
-            return make_response(jsonify({"error": "Invalid date"}), 400)
+    date = req.get("date")
+    movieid = req.get("movieid")
 
-        try:
-            # The showtime service returns a list of movie objects; we need to extract the 'movies' field
-            showtime_data = showtime_response.json()
+    if not date or not movieid:
+        return make_response(jsonify({"error": "Missing 'date' or 'movieid'"}), 400)
 
-            if not showtime_data or not isinstance(showtime_data, list):
-                return make_response(jsonify({"error": "Invalid response format from showtime service"}), 500)
+    showtime_response = requests.get(f"http://127.0.0.1:3202/showmovies/{date}")
 
-            # Extract the movies list from the first item in the showtime data
-            available_movies = showtime_data[0].get("movies", [])
+    if showtime_response.status_code != 200:
+        return make_response(jsonify({"error": "Invalid date"}), 400)
 
-            # Log the movies for debugging
-            print(f"Movies available on {date.get('date')}: {available_movies}")
+    try:
+        showtime_data = showtime_response.json()
 
-            # Validate movie IDs in the date
-            invalid_movies = [
-                movie_id for movie_id in date.get("movies", [])
-                if movie_id not in available_movies
-            ]
-
-            if invalid_movies:
-                return make_response(
-                    jsonify({"error": f"Invalid movie IDs {invalid_movies} for the given date"}), 400
-                )
-
-        except ValueError:
+        if not showtime_data or not isinstance(showtime_data, list):
             return make_response(jsonify({"error": "Invalid response format from showtime service"}), 500)
 
-    new_booking = {
-        "userid": userid,
-        "dates": dates
-    }
+        available_movies = showtime_data[0].get("movies", [])
 
+        if movieid not in available_movies:
+            return make_response(
+                jsonify({"error": f"Invalid movie ID {movieid} for the given date"}), 400
+            )
+
+    except ValueError:
+        return make_response(jsonify({"error": "Invalid response format from showtime service"}), 500)
+
+    # Check if the booking already exists
     for booking in bookings:
-        if booking["userid"] == userid and booking["dates"] == dates:
+        if booking["userid"] == userid and any(d['date'] == date and movieid in d.get('movies', []) for d in booking["dates"]):
             return make_response(jsonify({"error": "Booking already exists"}), 409)
 
-    bookings.append(new_booking)
+    # Create or update the booking
+    user_booking = next((booking for booking in bookings if booking["userid"] == userid), None)
+    if user_booking:
+        # Add the new movie to the existing date or create a new date entry
+        user_dates = user_booking["dates"]
+        existing_date = next((d for d in user_dates if d["date"] == date), None)
+        if existing_date:
+            existing_date["movies"].append(movieid)
+        else:
+            user_dates.append({"date": date, "movies": [movieid]})
+    else:
+        user_booking = {
+            "userid": userid,
+            "dates": [
+                {
+                    "date": date,
+                    "movies": [movieid]
+                }
+            ]
+        }
+        bookings.append(user_booking)
+
     write_bookings(bookings)
 
-    return make_response(jsonify({"message": "Booking created"}), 200)
-
+    return make_response(jsonify(user_booking), 200)
 
 def write_bookings(bookings):
     with open('./databases/bookings.json', 'w') as f:
