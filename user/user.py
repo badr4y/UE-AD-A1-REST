@@ -24,13 +24,18 @@ def getUserInfoById(user_Id):
     else:
         return make_response(jsonify({'error': 'User not found'}), 400)
 
-@app.route("/users/<timeSinceLastActivity>", methods=['GET'])
-def getUserSinceTime(timeSinceLastActivity):  
-   userArray = list(filter(lambda x: x['last_active'] > int(timeSinceLastActivity),users))
-   return make_response(jsonify(userArray), 200)
+
+@app.route("/users", methods=['GET'])
+def getUserSinceTime():
+    timeSinceLastActivity = request.args.get('timeSinceLastActivity')
+    if timeSinceLastActivity is None:
+        return make_response(jsonify({"error": "timeSinceLastActivity parameter is required"}), 400)
+
+    userArray = list(filter(lambda x: x['last_active'] > int(timeSinceLastActivity), users))
+    return make_response(jsonify(userArray), 200)
 
 @app.route("/users/<userId>/booking", methods=['POST'])
-def creatBookingForUser(userId):
+def createBookingForUser(userId):
     req = request.get_json()
     date = req.get("date")
     movieId = req.get("movieid")

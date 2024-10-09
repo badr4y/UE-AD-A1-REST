@@ -21,7 +21,7 @@ paths:
         - developers
       summary: Create a booking for the user
       description: Create a new movie booking for a user
-      operationId: creatBookingForUser
+      operationId: createBookingForUser
       requestBody:
         required: true
         content:
@@ -86,15 +86,14 @@ paths:
         "400":
           description: bad input parameter
 
-
-  /users/{timeSinceLastActivity}:
+  /users:
     get:
       tags:
         - developers
       summary: get users active since a specific timestamp
       parameters:
         - name: timeSinceLastActivity
-          in: path
+          in: query
           required: true
           schema:
             type: integer
@@ -106,6 +105,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+
   /users/{userId}/bookingsInfo:
     get:
       tags:
