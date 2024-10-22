@@ -30,14 +30,20 @@ def getUserInfoById(user_Id):
 
 # Endpoint to get users who have been active since a specified time
 @app.route("/users", methods=['GET'])
-def getUserSinceTime():
-    timeSinceLastActivity = request.args.get('timeSinceLastActivity')  # Get the query parameter
+def get_users():
+    # Endpoint to retrieve all bookings
+    res = make_response(jsonify(users), 200)  # Create a response with the bookings data
+    return res
+@app.route("/users/time/<timeSinceLastActivity>")
+def getUserSinceTime(timeSinceLastActivity):
     if timeSinceLastActivity is None:
         return make_response(jsonify({"error": "timeSinceLastActivity parameter is required"}), 400)
 
     # Filter users based on their last active timestamp
     userArray = list(filter(lambda x: x['last_active'] > int(timeSinceLastActivity), users))
     return make_response(jsonify(userArray), 200)  # Return the filtered list of users
+
+
 
 # Endpoint to create a booking for a specific user
 @app.route("/users/<userId>/booking", methods=['POST'])

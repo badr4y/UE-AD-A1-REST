@@ -1,3 +1,5 @@
 apis:
   booking/UE-archi-distribuees-Booking-1.0.0-resolved.yaml:
     alias: booking-api
+  user/UE-archi-distribuees-User-1.0.0-resolved.yaml:
+    alias: users-api

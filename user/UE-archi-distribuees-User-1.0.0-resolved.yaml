@@ -100,15 +100,14 @@ paths:
             text/html:
               schema:
                 type: string
-                example: <h1>Test</h1>
+                example: "<h1>Test</h1>"
 
   /users/{user_Id}:
     get:
       tags:
         - developers
-      summary: Get user info that has user_Id
-      description: |
-        Get user info that has user_Id
+      summary: Get user info by user_Id
+      description: Get user info that has user_Id
       operationId: getUserInfoById
       parameters:
         - name: user_Id
@@ -119,7 +118,7 @@ paths:
             example: chris_rivers  # Example of a user_Id
       responses:
         "200":
-          description: Get user info that has user_Id
+          description: Get user info by user_Id
           content:
             application/json:
               schema:
@@ -131,14 +130,10 @@ paths:
     get:
       tags:
         - developers
-      summary: Get users active since a specific timestamp
-      parameters:
-        - name: timeSinceLastActivity
-          in: query
-          required: true
-          schema:
-            type: integer
-            example: 1360031010
+      summary: Get all users
+      description: |
+        Retrieves a list of all users
+      operationId: getUsers
       responses:
         "200":
           description: List of users
@@ -146,6 +141,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/users'
+        "400":
+          description: No users found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+          
+  /users/time/{timeSinceLastActivity}:
+    get:
+      tags:
+        - developers
+      summary: Get users active since a specific timestamp
+      description: |
+        Retrieve users who have been active since the specified `timeSinceLastActivity` timestamp.
+      operationId: getUserSinceTime
+      parameters:
+        - name: timeSinceLastActivity
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1360031010
+      responses:
+        "200":
+          description: List of users who were active since the provided timestamp
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+        "400":
+          description: Missing or invalid time parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
 
   /users/{userId}/bookingsInfo:
     get:
@@ -181,6 +212,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+
 components:
   schemas:
     users:
@@ -191,9 +223,9 @@ components:
         $ref: '#/components/schemas/userItem'
     userItem:
       required:
-      - id
-      - name
-      - last_active
+        - id
+        - name
+        - last_active
       type: object
       properties:
         id:
