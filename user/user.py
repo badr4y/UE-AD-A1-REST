@@ -99,7 +99,24 @@ def getAllBookedMoviesRaw(userId):
         return make_response(jsonify(userBooking), 200)  # Return the user's booking data
     else:
         return make_response(jsonify({'error': 'Bookings not found'}), 400)  # Return an error if no bookings found
+    
+@app.route("/users/<userId>/booking", methods=['DELETE'])
+def remove_booking_for_user(userId):
+    req = request.get_json()  # Get the JSON request body
+    date = req.get("date")
+    movieId = req.get("movieid")
 
+    # Check if date and movieId are provided
+    if not date or not movieId:
+        return make_response(jsonify({"error": "Missing 'date' or 'movieid' in request body"}), 400)
+
+    # Create a request to the booking service to delete the booking
+    deleteBookingResponse = requests.delete(f"http://127.0.0.1:3201/bookings/del/{userId}", json=req)
+
+    if deleteBookingResponse.status_code == 200:
+        return make_response(jsonify(f"Successfully deleted booking for user {userId} on date {date} for movie {movieId}"), 200)  # Return success message
+    else:
+        return make_response(deleteBookingResponse.json(), deleteBookingResponse.status_code)  # Return error from the booking service
 # Start the Flask application
 if __name__ == "__main__":
     print("Server running in port %s" % (PORT))

@@ -1,0 +1,278 @@
+{
+    "version": "2.0.0",
+    "runtimeConfiguration": {
+        "environment": "default",
+        "laxTestingModeEnabled": false,
+        "logLevel": "error",
+        "logDestination": "stdout+platform",
+        "logMaxFileSize": 2147483648,
+        "requestHeaderNameRequestId": "x-scan-request-id",
+        "requestHeaderNameScenarioId": "x-scan-scenario-id",
+        "requestFlowrate": 100,
+        "requestTimeout": 30,
+        "requestTlsInsecureSkipVerify": true,
+        "responseFollowRedirection": false,
+        "responseMaxBodySizeScan": 10485760,
+        "happyPathOnly": false,
+        "maxScanDuration": 3600,
+        "memoryLimit": 2147483648,
+        "memoryTimeSpan": 10,
+        "reportMaxHttpResponseSizeHappyPath": 8092,
+        "reportMaxBodySizeHappyPath": 8092,
+        "reportMaxHttpResponseSizeTest": 8092,
+        "reportMaxBodySizeTest": 8092,
+        "reportIssuesOnly": false,
+        "reportMaxIssues": 1000,
+        "reportMaxSize": 20971520,
+        "reportGenerateCurlCommand": true
+    },
+    "customizations": {
+        "happyPaths": {
+            "retry": 1,
+            "responsePolicy": {
+                "httpStatusExpected": true,
+                "mustBeConformant": true
+            },
+            "httpStatusExpected": [
+                "2XX",
+                "400",
+                "404"
+            ]
+        },
+        "tests": {
+            "responsePolicy": {
+                "httpStatusExpected": true,
+                "mustBeConformant": true
+            }
+        }
+    },
+    "operations": {
+        "add_booking_byuser": {
+            "operationId": "add_booking_byuser",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/add_booking_byuser/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "add_booking_byuser",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "/bookings/{userid}",
+                        "method": "POST",
+                        "paths": [
+                            {
+                                "key": "userid",
+                                "value": "ezvwxfgdyxvotjpgbqimatrmaopxxkzr"
+                            }
+                        ],
+                        "headers": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "requestBody": {
+                            "mode": "json",
+                            "json": {
+                                "date": "20151201",
+                                "movieid": "276c79ec-a26a-40a6-b3d3-fb242a5947b6"
+                            }
+                        }
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    },
+                    "409": {
+                        "expectations": {
+                            "httpStatus": 409
+                        }
+                    }
+                }
+            }
+        },
+        "get_booking_for_user": {
+            "operationId": "get_booking_for_user",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/get_booking_for_user/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "get_booking_for_user",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "/bookings/{userid}",
+                        "method": "GET",
+                        "paths": [
+                            {
+                                "key": "userid",
+                                "value": "yuhdebcthtyhhvlcorlcxuviupyozzpw"
+                            }
+                        ]
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    }
+                }
+            }
+        },
+        "get_json": {
+            "operationId": "get_json",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/get_json/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "get_json",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "/bookings",
+                        "method": "GET"
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    }
+                }
+            }
+        },
+        "home": {
+            "operationId": "home",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/home/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "home",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "/",
+                        "method": "GET"
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    }
+                }
+            }
+        },
+        "remove_booking_fromuserid": {
+            "operationId": "remove_booking_fromuserid",
+            "scenarios": [
+                {
+                    "key": "happy.path",
+                    "fuzzing": true,
+                    "requests": [
+                        {
+                            "$ref": "#/operations/remove_booking_fromuserid/request",
+                            "fuzzing": true
+                        }
+                    ]
+                }
+            ],
+            "request": {
+                "operationId": "remove_booking_fromuserid",
+                "request": {
+                    "type": "42c",
+                    "details": {
+                        "url": "/bookings/del/{userid}",
+                        "method": "DELETE",
+                        "paths": [
+                            {
+                                "key": "userid",
+                                "value": "kfzlyhpcxdqikvgwvacrkbzqmnenrcwt"
+                            }
+                        ]
+                    }
+                },
+                "defaultResponse": "200",
+                "responses": {
+                    "200": {
+                        "expectations": {
+                            "httpStatus": 200
+                        }
+                    },
+                    "400": {
+                        "expectations": {
+                            "httpStatus": 400
+                        }
+                    },
+                    "404": {
+                        "expectations": {
+                            "httpStatus": 404
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "environments": {
+        "default": {
+            "variables": {
+                "host": {
+                    "from": "environment",
+                    "name": "SCAN42C_HOST",
+                    "required": true
+                }
+            }
+        }
+    }
+}

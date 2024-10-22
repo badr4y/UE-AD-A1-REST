@@ -40,6 +40,52 @@ def get_bookings_byuserid(userid):
         res = make_response(jsonify(json), 200)
     return res
 
+@app.route("/bookings/del/<userid>", methods=['DELETE'])
+def remove_booking_fromuserid(userid):
+    # Endpoint to delete a movie from a booking for a specific user identified by userid
+    req = request.get_json()  # Get JSON data from the request body
+    date = req.get("date")  # Extract the date from the request body
+    movieid = req.get("movieid")  # Extract the movieid from the request body
+
+    if not date or not movieid:
+        # Return an error if the required data is missing
+        return make_response(jsonify({"error": "Missing 'date' or 'movieid' in the request"}), 400)
+
+    # Find the user's booking by userid
+    user_booking = next((booking for booking in bookings if booking["userid"] == userid), None)
+
+    if not user_booking:
+        # Return an error if no booking exists for the user
+        return make_response(jsonify({"error": f"No booking found for user {userid}"}), 404)
+
+    # Find the specified date in the user's bookings
+    date_booking = next((d for d in user_booking["dates"] if d["date"] == date), None)
+
+    if not date_booking:
+        # Return an error if the date is not found in the user's bookings
+        return make_response(jsonify({"error": f"No booking found for the given date {date}"}), 404)
+
+    if movieid not in date_booking["movies"]:
+        # Return an error if the movie is not found in the movies list for the date
+        return make_response(jsonify({"error": f"Movie ID {movieid} not found for the given date {date}"}), 404)
+
+    # Remove the movie from the movies list for the given date
+    date_booking["movies"].remove(movieid)
+
+    if not date_booking["movies"]:
+        # If the movie list for the date is now empty, remove the entire date entry
+        user_booking["dates"].remove(date_booking)
+
+    if not user_booking["dates"]:
+        # If there are no more bookings for the user, remove the entire booking
+        bookings.remove(user_booking)
+
+    # Persist the updated bookings
+    write_bookings(bookings)
+
+    # Return a success message
+    return make_response(jsonify({"message": f"Movie ID {movieid} for date {date} removed successfully for user {userid}"}), 200)
+
 @app.route("/bookings/<userid>", methods=['POST'])
 def add_booking_byuserid(userid):
     # Endpoint to add a new booking for a specific user

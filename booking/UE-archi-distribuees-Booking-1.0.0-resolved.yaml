@@ -1,4 +1,3 @@
----
 openapi: 3.0.3
 info:
   title: Booking API
@@ -101,6 +100,44 @@ paths:
                 $ref: '#/components/schemas/BookingsUser'
         "409":
           description: an existing item already exists
+  /bookings/del/{userid}:
+    delete:
+      tags:
+      - admins
+      summary: remove a movie from a user's booking
+      description: |
+        Deletes a booking for a specific movie on a specific date for the provided user ID.
+      operationId: remove_booking_fromuserid
+      parameters:
+      - name: userid
+        in: path
+        description: User ID.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Date and Movie ID to remove
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMovie'
+      responses:
+        "200":
+          description: Booking removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Movie ID 276c79ec-a26a-40a6-b3d3-fb242a5947b6 for date 20151201 removed successfully for user chris_rivers
+        "404":
+          description: Booking not found or movie not found for the given date
+        "400":
+          description: bad input parameter
 components:
   schemas:
     AllBookings:
